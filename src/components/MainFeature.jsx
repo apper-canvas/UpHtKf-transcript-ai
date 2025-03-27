@@ -12,7 +12,8 @@ import {
   Clock, 
   FileText, 
   AlignLeft, 
-  AlignJustify 
+  AlignJustify,
+  ListOrdered
 } from "lucide-react";
 
 const MainFeature = ({ onTranscriptGenerated }) => {
@@ -24,8 +25,9 @@ const MainFeature = ({ onTranscriptGenerated }) => {
   const [videoData, setVideoData] = useState(null);
   const [transcript, setTranscript] = useState("");
   const [summary, setSummary] = useState("");
-  const [summaryLength, setSummaryLength] = useState("medium"); // short, medium, long
+  const [summaryLength, setSummaryLength] = useState("medium"); // short, medium, long, chapters
   const [copied, setCopied] = useState(false);
+  const [showChapters, setShowChapters] = useState(true);
   
   const inputRef = useRef(null);
   const progressInterval = useRef(null);
@@ -119,16 +121,53 @@ const MainFeature = ({ onTranscriptGenerated }) => {
         [05:30] Thanks for watching! Don't forget to like and subscribe for more tech insights.
       `;
       
-      // Mock summary
+      // Mock summaries
       const mockSummary = {
         short: "This video explores how AI is transforming content creation through tools like automated transcription, summarization, and video editing. While AI handles repetitive tasks, human creativity remains essential in the collaborative future of content creation.",
         medium: "This video discusses the impact of AI on content creation, highlighting several key applications. It covers AI-powered transcription services that convert speech to text, summarization tools that identify key points in long-form content, and automated video editing based on content analysis. The presenter emphasizes that AI is not replacing human creators but rather empowering them by handling repetitive tasks, while human creativity remains essential. The video concludes that the future of content creation will involve collaboration between humans and AI technologies.",
-        long: "This comprehensive video explores the transformative impact of artificial intelligence on content creation across multiple domains. The presenter begins by introducing the topic and setting expectations for the discussion around how AI is changing content creation and consumption patterns.\n\nThe video first examines AI-powered transcription services, highlighting their ability to convert speech to text with increasingly high accuracy rates. This technology enables content to become more accessible and repurposable across different formats.\n\nNext, the discussion moves to AI summarization tools that can process long-form content and extract the most important points and themes using natural language processing. These tools help address information overload by condensing content while preserving key insights.\n\nThe presenter then covers automated video editing capabilities, where AI can analyze video content to identify the most engaging segments and automatically create highlights or shorter versions. This technology saves creators significant time in post-production.\n\nLooking toward the future, the video predicts even more sophisticated AI tools for content creators, while emphasizing that the most effective approach will be collaborative, with AI handling repetitive, time-consuming tasks while humans provide creative direction, emotional intelligence, and contextual understanding.\n\nThe video concludes by reinforcing that AI should be viewed not as a replacement for human creators but as a powerful tool that empowers them to focus on higher-value creative work. This human-AI partnership represents the future of content creation across industries."
+        long: "This comprehensive video explores the transformative impact of artificial intelligence on content creation across multiple domains. The presenter begins by introducing the topic and setting expectations for the discussion around how AI is changing content creation and consumption patterns.\n\nThe video first examines AI-powered transcription services, highlighting their ability to convert speech to text with increasingly high accuracy rates. This technology enables content to become more accessible and repurposable across different formats.\n\nNext, the discussion moves to AI summarization tools that can process long-form content and extract the most important points and themes using natural language processing. These tools help address information overload by condensing content while preserving key insights.\n\nThe presenter then covers automated video editing capabilities, where AI can analyze video content to identify the most engaging segments and automatically create highlights or shorter versions. This technology saves creators significant time in post-production.\n\nLooking toward the future, the video predicts even more sophisticated AI tools for content creators, while emphasizing that the most effective approach will be collaborative, with AI handling repetitive, time-consuming tasks while humans provide creative direction, emotional intelligence, and contextual understanding.\n\nThe video concludes by reinforcing that AI should be viewed not as a replacement for human creators but as a powerful tool that empowers them to focus on higher-value creative work. This human-AI partnership represents the future of content creation across industries.",
+        chapters: [
+          {
+            title: "Introduction to AI in Content Creation",
+            timestamp: "00:00",
+            content: "The video begins with an introduction to artificial intelligence and its growing role in content creation. The presenter sets the stage by explaining how AI technologies are revolutionizing the way content is created, edited, and consumed across various industries. This section provides a broad overview of the transformative potential of AI in the creative process."
+          },
+          {
+            title: "AI-Powered Transcription Services",
+            timestamp: "01:00",
+            content: "This chapter explores how AI transcription services have evolved to convert speech to text with remarkable accuracy. The presenter discusses how these tools leverage advanced speech recognition algorithms and machine learning to handle different accents, background noise, and specialized terminology. The section highlights how transcription technology makes content more accessible and enables creators to repurpose audio and video content into written formats efficiently."
+          },
+          {
+            title: "Content Summarization Tools",
+            timestamp: "01:30",
+            content: "The video delves into AI-powered summarization tools that can process long-form content and extract the most important points and themes. Using natural language processing, these systems can analyze text to identify key information and generate concise summaries of varying lengths. This technology helps address information overload by enabling users to quickly grasp the essence of lengthy content without reading everything in detail."
+          },
+          {
+            title: "Automated Video Editing Applications",
+            timestamp: "02:30",
+            content: "This section examines how AI is transforming video editing through automated systems that can analyze content and identify the most engaging segments. The presenter demonstrates how these tools can automatically create highlights, trim dead space, and even suggest optimal cuts based on content analysis. This technology significantly reduces the time required for post-production while maintaining quality output."
+          },
+          {
+            title: "Future Developments in AI Tools",
+            timestamp: "03:30",
+            content: "Looking toward the future, this chapter discusses upcoming developments in AI tools for content creators. The presenter explores emerging technologies like AI-generated visuals, advanced natural language generation, and personalized content delivery systems. This forward-looking section provides insights into how the content creation landscape may evolve in the coming years."
+          },
+          {
+            title: "Human-AI Collaboration",
+            timestamp: "04:00",
+            content: "This important chapter addresses the relationship between human creators and AI tools. Rather than viewing AI as a replacement for human creativity, the presenter emphasizes that the most effective approach is collaborative. The section explores how AI can handle repetitive, time-consuming tasks while humans provide creative direction, emotional intelligence, and contextual understanding that machines currently cannot replicate."
+          },
+          {
+            title: "Conclusion and Final Thoughts",
+            timestamp: "05:00",
+            content: "The video concludes by reinforcing that AI should be viewed not as a replacement for content creators but as a powerful tool that empowers them to focus on higher-value creative work. This human-AI partnership represents the future of content creation across industries. The presenter ends with a call to action, encouraging viewers to embrace these new technologies while continuing to develop their unique creative skills."
+          }
+        ]
       };
       
       setVideoData(mockVideoData);
       setTranscript(mockTranscript);
-      setSummary(mockSummary[summaryLength]);
+      updateSummary(mockSummary, summaryLength);
       
       // Add to recent transcripts
       if (onTranscriptGenerated) {
@@ -149,6 +188,15 @@ const MainFeature = ({ onTranscriptGenerated }) => {
     setCopied(true);
   };
 
+  // Update summary based on length and format
+  const updateSummary = (summaryData, length) => {
+    if (length === "chapters") {
+      setSummary(summaryData.chapters);
+    } else {
+      setSummary(summaryData[length]);
+    }
+  };
+
   // Handle summary length change
   const handleSummaryLengthChange = (length) => {
     setSummaryLength(length);
@@ -158,10 +206,47 @@ const MainFeature = ({ onTranscriptGenerated }) => {
       const summaries = {
         short: "This video explores how AI is transforming content creation through tools like automated transcription, summarization, and video editing. While AI handles repetitive tasks, human creativity remains essential in the collaborative future of content creation.",
         medium: "This video discusses the impact of AI on content creation, highlighting several key applications. It covers AI-powered transcription services that convert speech to text, summarization tools that identify key points in long-form content, and automated video editing based on content analysis. The presenter emphasizes that AI is not replacing human creators but rather empowering them by handling repetitive tasks, while human creativity remains essential. The video concludes that the future of content creation will involve collaboration between humans and AI technologies.",
-        long: "This comprehensive video explores the transformative impact of artificial intelligence on content creation across multiple domains. The presenter begins by introducing the topic and setting expectations for the discussion around how AI is changing content creation and consumption patterns.\n\nThe video first examines AI-powered transcription services, highlighting their ability to convert speech to text with increasingly high accuracy rates. This technology enables content to become more accessible and repurposable across different formats.\n\nNext, the discussion moves to AI summarization tools that can process long-form content and extract the most important points and themes using natural language processing. These tools help address information overload by condensing content while preserving key insights.\n\nThe presenter then covers automated video editing capabilities, where AI can analyze video content to identify the most engaging segments and automatically create highlights or shorter versions. This technology saves creators significant time in post-production.\n\nLooking toward the future, the video predicts even more sophisticated AI tools for content creators, while emphasizing that the most effective approach will be collaborative, with AI handling repetitive, time-consuming tasks while humans provide creative direction, emotional intelligence, and contextual understanding.\n\nThe video concludes by reinforcing that AI should be viewed not as a replacement for human creators but as a powerful tool that empowers them to focus on higher-value creative work. This human-AI partnership represents the future of content creation across industries."
+        long: "This comprehensive video explores the transformative impact of artificial intelligence on content creation across multiple domains. The presenter begins by introducing the topic and setting expectations for the discussion around how AI is changing content creation and consumption patterns.\n\nThe video first examines AI-powered transcription services, highlighting their ability to convert speech to text with increasingly high accuracy rates. This technology enables content to become more accessible and repurposable across different formats.\n\nNext, the discussion moves to AI summarization tools that can process long-form content and extract the most important points and themes using natural language processing. These tools help address information overload by condensing content while preserving key insights.\n\nThe presenter then covers automated video editing capabilities, where AI can analyze video content to identify the most engaging segments and automatically create highlights or shorter versions. This technology saves creators significant time in post-production.\n\nLooking toward the future, the video predicts even more sophisticated AI tools for content creators, while emphasizing that the most effective approach will be collaborative, with AI handling repetitive, time-consuming tasks while humans provide creative direction, emotional intelligence, and contextual understanding.\n\nThe video concludes by reinforcing that AI should be viewed not as a replacement for human creators but as a powerful tool that empowers them to focus on higher-value creative work. This human-AI partnership represents the future of content creation across industries.",
+        chapters: [
+          {
+            title: "Introduction to AI in Content Creation",
+            timestamp: "00:00",
+            content: "The video begins with an introduction to artificial intelligence and its growing role in content creation. The presenter sets the stage by explaining how AI technologies are revolutionizing the way content is created, edited, and consumed across various industries. This section provides a broad overview of the transformative potential of AI in the creative process."
+          },
+          {
+            title: "AI-Powered Transcription Services",
+            timestamp: "01:00",
+            content: "This chapter explores how AI transcription services have evolved to convert speech to text with remarkable accuracy. The presenter discusses how these tools leverage advanced speech recognition algorithms and machine learning to handle different accents, background noise, and specialized terminology. The section highlights how transcription technology makes content more accessible and enables creators to repurpose audio and video content into written formats efficiently."
+          },
+          {
+            title: "Content Summarization Tools",
+            timestamp: "01:30",
+            content: "The video delves into AI-powered summarization tools that can process long-form content and extract the most important points and themes. Using natural language processing, these systems can analyze text to identify key information and generate concise summaries of varying lengths. This technology helps address information overload by enabling users to quickly grasp the essence of lengthy content without reading everything in detail."
+          },
+          {
+            title: "Automated Video Editing Applications",
+            timestamp: "02:30",
+            content: "This section examines how AI is transforming video editing through automated systems that can analyze content and identify the most engaging segments. The presenter demonstrates how these tools can automatically create highlights, trim dead space, and even suggest optimal cuts based on content analysis. This technology significantly reduces the time required for post-production while maintaining quality output."
+          },
+          {
+            title: "Future Developments in AI Tools",
+            timestamp: "03:30",
+            content: "Looking toward the future, this chapter discusses upcoming developments in AI tools for content creators. The presenter explores emerging technologies like AI-generated visuals, advanced natural language generation, and personalized content delivery systems. This forward-looking section provides insights into how the content creation landscape may evolve in the coming years."
+          },
+          {
+            title: "Human-AI Collaboration",
+            timestamp: "04:00",
+            content: "This important chapter addresses the relationship between human creators and AI tools. Rather than viewing AI as a replacement for human creativity, the presenter emphasizes that the most effective approach is collaborative. The section explores how AI can handle repetitive, time-consuming tasks while humans provide creative direction, emotional intelligence, and contextual understanding that machines currently cannot replicate."
+          },
+          {
+            title: "Conclusion and Final Thoughts",
+            timestamp: "05:00",
+            content: "The video concludes by reinforcing that AI should be viewed not as a replacement for content creators but as a powerful tool that empowers them to focus on higher-value creative work. This human-AI partnership represents the future of content creation across industries. The presenter ends with a call to action, encouraging viewers to embrace these new technologies while continuing to develop their unique creative skills."
+          }
+        ]
       };
       
-      setSummary(summaries[length]);
+      updateSummary(summaries, length);
     }
   };
 
@@ -176,6 +261,15 @@ const MainFeature = ({ onTranscriptGenerated }) => {
     setTranscript("");
     setSummary("");
     inputRef.current.focus();
+  };
+
+  // Get formatted chapter summary for copying
+  const getFormattedChapterSummary = () => {
+    if (!Array.isArray(summary)) return "";
+    
+    return summary.map(chapter => 
+      `[${chapter.timestamp}] ${chapter.title}\n${chapter.content}\n`
+    ).join('\n');
   };
 
   return (
@@ -344,7 +438,9 @@ const MainFeature = ({ onTranscriptGenerated }) => {
                 <div className="card h-full flex flex-col">
                   <div className="border-b border-surface-200 dark:border-surface-700 p-4">
                     <div className="flex items-center justify-between">
-                      <h3 className="font-semibold">AI Summary</h3>
+                      <h3 className="font-semibold">
+                        {summaryLength === "chapters" ? "Chapter-Based Summary" : "AI Summary"}
+                      </h3>
                       <div className="flex items-center gap-2">
                         <button 
                           onClick={() => handleSummaryLengthChange("short")}
@@ -376,21 +472,49 @@ const MainFeature = ({ onTranscriptGenerated }) => {
                         >
                           <AlignJustify size={18} />
                         </button>
+                        <button 
+                          onClick={() => handleSummaryLengthChange("chapters")}
+                          className={`p-1.5 rounded-md ${summaryLength === "chapters" 
+                            ? "bg-primary/10 text-primary dark:bg-primary/20" 
+                            : "hover:bg-surface-100 dark:hover:bg-surface-700"}`}
+                          aria-label="Chapter-based summary"
+                          title="Chapter-based summary"
+                        >
+                          <ListOrdered size={18} />
+                        </button>
                       </div>
                     </div>
                   </div>
                   
                   <div className="p-4 flex-grow overflow-y-auto scrollbar-hide">
                     <div className="prose prose-sm dark:prose-invert max-w-none">
-                      {summary.split('\n\n').map((paragraph, i) => (
-                        <p key={i}>{paragraph}</p>
-                      ))}
+                      {summaryLength === "chapters" && Array.isArray(summary) ? (
+                        <div className="space-y-2">
+                          {summary.map((chapter, i) => (
+                            <div key={i}>
+                              <h3 className="chapter-heading">
+                                <span className="chapter-timestamp">{chapter.timestamp}</span>
+                                {chapter.title}
+                              </h3>
+                              <div className="chapter-content">
+                                {chapter.content}
+                              </div>
+                            </div>
+                          ))}
+                        </div>
+                      ) : (
+                        <>
+                          {typeof summary === 'string' && summary.split('\n\n').map((paragraph, i) => (
+                            <p key={i}>{paragraph}</p>
+                          ))}
+                        </>
+                      )}
                     </div>
                   </div>
                   
                   <div className="border-t border-surface-200 dark:border-surface-700 p-3 flex justify-end gap-2">
                     <button 
-                      onClick={() => handleCopy(summary)}
+                      onClick={() => handleCopy(summaryLength === "chapters" ? getFormattedChapterSummary() : summary)}
                       className="btn btn-outline py-1.5 px-3 text-sm gap-1"
                     >
                       {copied ? <Check size={14} /> : <Copy size={14} />}

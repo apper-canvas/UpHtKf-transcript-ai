@@ -121,7 +121,7 @@ const Home = () => {
                 <div className="w-10 h-10 rounded-full bg-primary flex items-center justify-center text-white font-bold flex-shrink-0">3</div>
                 <div>
                   <h3 className="text-lg font-semibold mb-1">Get Summary</h3>
-                  <p className="text-surface-600 dark:text-surface-300">Receive an intelligent summary of the video content in various lengths.</p>
+                  <p className="text-surface-600 dark:text-surface-300">Receive an intelligent summary of the video content in various lengths or as structured chapters.</p>
                 </div>
               </div>
             </div>

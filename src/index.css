@@ -40,6 +40,18 @@
   .neu-card {
     @apply bg-surface-100 dark:bg-surface-800 rounded-xl shadow-neu-light dark:shadow-neu-dark p-6;
   }
+
+  .chapter-heading {
+    @apply text-lg font-semibold text-primary dark:text-primary-light mb-2 mt-4 flex items-center gap-2;
+  }
+
+  .chapter-timestamp {
+    @apply bg-primary/10 dark:bg-primary/20 text-primary dark:text-primary-light px-2 py-1 rounded text-sm font-mono;
+  }
+
+  .chapter-content {
+    @apply pl-4 border-l-2 border-surface-200 dark:border-surface-700 mb-6 text-surface-700 dark:text-surface-300;
+  }
 }
 
 @layer utilities {
