@@ -6,6 +6,7 @@ import Home from "./pages/Home";
 import NotFound from "./pages/NotFound";
 import Playlists from "./pages/Playlists";
 import PlaylistDetail from "./pages/PlaylistDetail";
+import VideoTranscriber from "./components/VideoTranscriber";
 
 function App() {
   const [darkMode, setDarkMode] = useState(() => {
@@ -48,6 +49,7 @@ function App() {
           <div className="flex items-center gap-4">
             <a href="/" className="text-sm font-medium hover:text-primary transition-colors">Home</a>
             <a href="/playlists" className="text-sm font-medium hover:text-primary transition-colors">Playlists</a>
+            <a href="/transcribe" className="text-sm font-medium hover:text-primary transition-colors">Transcribe</a>
             <button
               onClick={toggleDarkMode}
               className="p-2 rounded-full hover:bg-surface-200 dark:hover:bg-surface-700 transition-colors"
@@ -75,6 +77,7 @@ function App() {
             <Route path="/" element={<Home />} />
             <Route path="/playlists" element={<Playlists />} />
             <Route path="/playlists/:id" element={<PlaylistDetail />} />
+            <Route path="/transcribe" element={<VideoTranscriber />} />
             <Route path="*" element={<NotFound />} />
           </Routes>
         </AnimatePresence>
