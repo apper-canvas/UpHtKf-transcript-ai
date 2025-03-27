@@ -13,8 +13,11 @@ import {
   FileText, 
   AlignLeft, 
   AlignJustify,
-  ListOrdered
+  ListOrdered,
+  FolderPlus
 } from "lucide-react";
+import PlaylistButton from "./playlist/PlaylistButton";
+import AddToPlaylistModal from "./playlist/AddToPlaylistModal";
 
 const MainFeature = ({ onTranscriptGenerated }) => {
   const [url, setUrl] = useState("");
@@ -513,6 +516,7 @@ const MainFeature = ({ onTranscriptGenerated }) => {
                   </div>
                   
                   <div className="border-t border-surface-200 dark:border-surface-700 p-3 flex justify-end gap-2">
+                    <PlaylistButton transcript={videoData} />
                     <button 
                       onClick={() => handleCopy(summaryLength === "chapters" ? getFormattedChapterSummary() : summary)}
                       className="btn btn-outline py-1.5 px-3 text-sm gap-1"
